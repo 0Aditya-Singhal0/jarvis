@@ -1,0 +1,8 @@
+{
+  auto_https off
+}
+
+http://:80 {
+  respond /healthz "ok" 200
+  respond "Jarvis control plane scaffold; dashboard pending" 200
+}
