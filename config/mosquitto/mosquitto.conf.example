@@ -1,6 +1,0 @@
-listener 1883
-allow_anonymous false
-persistence true
-persistence_location /mosquitto/data/
-log_dest stdout
-# Owner-approved password_file and acl_file paths are added with the MQTT authorization design.

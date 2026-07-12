@@ -17,14 +17,14 @@ services:
     image: ${JARVIS_API_IMAGE:?Set an owner-approved full digest}
     environment:
       POSTGRES_HOST: postgres
-      MQTT_HOST: mqtt
+      MQTT_HOST: emqx
     secrets: [postgres_password]
     volumes: ["${JARVIS_DATA_ROOT:?Set an owner-approved external data root}:/var/lib/jarvis"]
     networks: [control]
     restart: on-failure:3
     depends_on:
       postgres: {condition: service_healthy}
-      mqtt: {condition: service_started}
+      emqx: {condition: service_started}
 
   postgres:
     image: ${POSTGRES_IMAGE:?Set an owner-approved full digest}
@@ -44,11 +44,10 @@ services:
       retries: 5
       start_period: 30s
 
-  mqtt:
-    image: ${MQTT_IMAGE:?Set an owner-approved full digest}
+  emqx:
+    image: ${EMQX_IMAGE:?Set an owner-approved full digest}
     volumes:
-      - ./config/mosquitto:/mosquitto/config:ro
-      - mqtt-data:/mosquitto/data
+      - emqx-data:/opt/emqx/data
     networks: [control]
     restart: on-failure:3
 
@@ -73,5 +72,5 @@ volumes:
   caddy-data: {}
   caddy-config: {}
   postgres-data: {}
-  mqtt-data: {}
+  emqx-data: {}
   hermes-data: {}
