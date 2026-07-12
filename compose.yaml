@@ -1,0 +1,76 @@
+name: ${COMPOSE_PROJECT_NAME:-jarvis}
+
+services:
+  caddy:
+    image: ${CADDY_IMAGE:?Set an owner-approved full digest}
+    ports: ["127.0.0.1:${JARVIS_HTTP_PORT:-18080}:80"]
+    volumes:
+      - ./config/caddy:/etc/caddy:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks: [edge, control]
+    restart: on-failure:3
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1/healthz"]
+
+  jarvis-api:
+    image: ${JARVIS_API_IMAGE:?Set an owner-approved full digest}
+    environment:
+      POSTGRES_HOST: postgres
+      MQTT_HOST: emqx
+    secrets: [postgres_password]
+    volumes: ["${JARVIS_DATA_ROOT:?Set an owner-approved external data root}:/var/lib/jarvis"]
+    networks: [control]
+    restart: on-failure:3
+    depends_on:
+      postgres: {condition: service_healthy}
+      emqx: {condition: service_started}
+
+  postgres:
+    image: ${POSTGRES_IMAGE:?Set an owner-approved full digest}
+    environment:
+      POSTGRES_USER: jarvis
+      POSTGRES_DB: jarvis
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      PGDATA: /var/lib/postgresql/data/pgdata
+    secrets: [postgres_password]
+    volumes: [postgres-data:/var/lib/postgresql/data]
+    networks: [control]
+    restart: on-failure:3
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  emqx:
+    image: ${EMQX_IMAGE:?Set an owner-approved full digest}
+    volumes:
+      - emqx-data:/opt/emqx/data
+    networks: [control]
+    restart: on-failure:3
+
+  hermes:
+    image: ${HERMES_IMAGE:?Set an owner-approved full digest}
+    command: ["gateway", "run"]
+    environment: ["API_SERVER_ENABLED=false"]
+    volumes: [hermes-data:/opt/data]
+    networks: [control]
+    restart: on-failure:3
+    healthcheck: {disable: true}
+
+secrets:
+  postgres_password:
+    file: ${JARVIS_SECRETS_DIR:?Set an owner-approved secrets directory}/postgres_password
+
+networks:
+  edge: {internal: true}
+  control: {internal: true}
+
+volumes:
+  caddy-data: {}
+  caddy-config: {}
+  postgres-data: {}
+  emqx-data: {}
+  hermes-data: {}
