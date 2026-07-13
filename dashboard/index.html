@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Jarvis · Local control plane</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header class="topbar">
+    <div class="identity">
+      <span class="mark" aria-hidden="true">J</span>
+      <div><strong>Jarvis</strong><span>owner control plane</span></div>
+    </div>
+    <div class="posture" aria-label="Current local control posture">
+      <span class="chip chip-local">Local only</span>
+      <span class="chip chip-unknown">Lock state unknown</span>
+      <span class="chip chip-unknown">Control plane unavailable</span>
+      <span class="chip chip-local">Cloud routing disabled</span>
+    </div>
+  </header>
+
+  <div class="notice" role="status">
+    <strong>Truthful unavailable state.</strong> This static shell is not connected to the control API. No approval, device, capture, retention, or audit information is loaded or cached here. Raw media stays local and is never rendered by this dashboard.
+  </div>
+
+  <div class="app-shell">
+    <nav class="sidebar" aria-label="Dashboard sections">
+      <button class="nav-item active" type="button" data-panel="overview" aria-current="page">Overview</button>
+      <button class="nav-item" type="button" data-panel="approvals">Approvals <span class="count" aria-label="unknown pending approvals">—</span></button>
+      <button class="nav-item" type="button" data-panel="devices">Devices</button>
+      <button class="nav-item" type="button" data-panel="timeline">Timeline &amp; retention</button>
+      <button class="nav-item" type="button" data-panel="audit">Audit</button>
+      <div class="sidebar-foot">No telemetry<br>Localhost delivery only</div>
+    </nav>
+
+    <main id="main-content">
+      <section class="panel active" id="overview" tabindex="-1">
+        <p class="eyebrow">Overview</p>
+        <h1>Owner review surface</h1>
+        <p class="lede">A read-only landing state for local status, exceptions, and approvals. Live values remain unavailable until the authenticated control API is integrated.</p>
+        <div class="cards">
+          <article class="card"><span>Pending approvals</span><strong>Unknown</strong><small>Not connected</small></article>
+          <article class="card"><span>Policy exceptions</span><strong>Unknown</strong><small>Not connected</small></article>
+          <article class="card"><span>Capture status</span><strong>Unknown</strong><small>Absent does not mean off</small></article>
+          <article class="card"><span>Broker reconciliation</span><strong>Unknown</strong><small>MQTT is non-authoritative</small></article>
+        </div>
+        <section class="empty-state">
+          <h2>No live status is shown</h2>
+          <p>The future API will provide authenticated, redacted data. This shell intentionally makes no claims about device state, consent, retention, or action execution.</p>
+        </section>
+      </section>
+
+      <section class="panel" id="approvals" tabindex="-1" hidden>
+        <p class="eyebrow">Approvals</p>
+        <h1>Review before action</h1>
+        <p class="lede">The future control API will make pending decisions the default view. This placeholder holds no action target, parameters, principal, hash, expiry, or context data.</p>
+        <div class="status-grid">
+          <article><h2>Pending</h2><p>Unavailable</p></article>
+          <article><h2>Settled</h2><p>Unavailable</p></article>
+          <article><h2>Expired / revoked</h2><p>Unavailable</p></article>
+        </div>
+        <section class="empty-state">
+          <h2>Confirmation is disabled</h2>
+          <p>A live detail view must display a decision ID, redacted target and parameters, reason, expiry, context IDs, payload-hash fingerprint, routing class, and execution warning. It must resubmit the displayed ID and hash only. Stale, mismatched, expired, and execution-in-progress requests remain unapproved.</p>
+          <button type="button" disabled>Approve action</button>
+          <button type="button" class="quiet" disabled>Revoke action</button>
+        </section>
+      </section>
+
+      <section class="panel" id="devices" tabindex="-1" hidden>
+        <p class="eyebrow">Devices</p>
+        <h1>Device posture</h1>
+        <p class="lede">No device list is cached in the browser. Future records use opaque identities and distinguish local revocation from broker completion or pending reconciliation.</p>
+        <section class="empty-state">
+          <h2>Devices unavailable</h2>
+          <p>When connected, each record may show exact capabilities, enrollment and ACL versions, transport, and last report. Capture is reported as unknown or last-reported only; an absent report is never shown as “off”.</p>
+        </section>
+      </section>
+
+      <section class="panel" id="timeline" tabindex="-1" hidden>
+        <p class="eyebrow">Timeline &amp; retention</p>
+        <h1>Derived-only records</h1>
+        <p class="lede">This screen will never offer playback, download, raw media, media paths, credentials, recovery material, or unredacted action parameters.</p>
+        <section class="empty-state">
+          <h2>Timeline unavailable</h2>
+          <p>Future rows are limited to time, opaque device identity, modality, classification, summary, retention/expiry or pin status, and opaque media-reference presence. Expired records are absent by default.</p>
+        </section>
+      </section>
+
+      <section class="panel" id="audit" tabindex="-1" hidden>
+        <p class="eyebrow">Audit</p>
+        <h1>Append-only accountability</h1>
+        <p class="lede">Audit history will be newest-first, redacted, permanent, non-editable, and non-deletable. This static screen contains no cached audit events.</p>
+        <section class="empty-state">
+          <h2>Audit unavailable</h2>
+          <p>Policy denials, conflicts, expired decisions, and pending broker reconciliation will be clearly represented once the authenticated API exists.</p>
+        </section>
+      </section>
+    </main>
+  </div>
+  <script src="assets/app.js"></script>
+</body>
+</html>
