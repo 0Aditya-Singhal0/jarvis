@@ -1,0 +1,91 @@
+name: ${COMPOSE_PROJECT_NAME:-jarvis}
+
+services:
+  caddy:
+    image: ${CADDY_IMAGE:?Set a locked Caddy image reference}
+    ports: ["127.0.0.1:${JARVIS_HTTP_PORT:-18080}:80"]
+    volumes:
+      - ./config/caddy:/etc/caddy:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks: [edge, control]
+    restart: on-failure:3
+    healthcheck:
+      test: ["CMD", "caddy", "validate", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  jarvis-api:
+    image: ${JARVIS_API_IMAGE:?Set a future locked Jarvis API image reference}
+    environment:
+      POSTGRES_HOST: postgres
+      MQTT_HOST: emqx
+    secrets: [postgres_password]
+    volumes: ["${JARVIS_DATA_ROOT:?Set an owner-approved external data root}:/var/lib/jarvis"]
+    networks: [control]
+    restart: on-failure:3
+    depends_on:
+      postgres: {condition: service_healthy}
+      emqx: {condition: service_healthy}
+
+  postgres:
+    image: ${POSTGRES_IMAGE:?Set a locked PostgreSQL image reference}
+    environment:
+      POSTGRES_USER: jarvis
+      POSTGRES_DB: jarvis
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      PGDATA: /var/lib/postgresql/18/docker
+    secrets: [postgres_password]
+    volumes: [postgres-data:/var/lib/postgresql]
+    networks: [control]
+    restart: on-failure:3
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  emqx:
+    image: ${EMQX_IMAGE:?Set a locked EMQX image reference}
+    hostname: emqx
+    environment:
+      EMQX_NODE_NAME: emqx@emqx
+    volumes:
+      - emqx-data:/opt/emqx/data
+      - emqx-log:/opt/emqx/log
+    networks: [control]
+    restart: on-failure:3
+    healthcheck:
+      test: ["CMD", "/opt/emqx/bin/emqx", "ctl", "status"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  hermes:
+    image: ${HERMES_IMAGE:?Set a locked Hermes image reference}
+    command: ["gateway", "run"]
+    environment: ["API_SERVER_ENABLED=false"]
+    volumes: [hermes-data:/opt/data]
+    networks: [control]
+    restart: on-failure:3
+    healthcheck: {disable: true}
+
+secrets:
+  postgres_password:
+    file: ${JARVIS_SECRETS_DIR:?Set an owner-approved secrets directory}/postgres_password
+
+networks:
+  edge: {internal: true}
+  control: {internal: true}
+
+volumes:
+  caddy-data: {}
+  caddy-config: {}
+  postgres-data: {}
+  emqx-data: {}
+  emqx-log: {}
+  hermes-data: {}

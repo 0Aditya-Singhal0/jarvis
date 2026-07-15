@@ -1,0 +1,3 @@
+# EMQX authentication and authorization are intentionally not enabled by this
+# scaffold. The approved EMQX security design will provide the final config.
+# Do not use this example as a runtime configuration until that review is done.

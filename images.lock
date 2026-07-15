@@ -1,0 +1,46 @@
+# Resolved container image record
+#
+# Resolution date: 2026-07-13
+# Platform: linux/amd64
+# Status: metadata resolved only. No image layer has been pulled and no service
+# has been started. The Jarvis API image awaits its separate build approval.
+
+[[image]]
+service = "caddy"
+repository = "caddy"
+tag = "2.11.4"
+reference = "caddy@sha256:98eb57d882ccd5213d1688764db10c1ca2c58a1ca3a6717a3411ad798f7a423a"
+source = "https://hub.docker.com/_/caddy"
+compressed_size_bytes = 23907283
+
+[[image]]
+service = "postgres"
+repository = "postgres"
+tag = "18.4-bookworm"
+reference = "postgres@sha256:c7d36c2369348f77fe9558f1970f7a0ea80ed55dfdf9500eb734159bd4df684d"
+source = "https://hub.docker.com/_/postgres"
+compressed_size_bytes = 157185236
+
+[[image]]
+service = "emqx"
+repository = "emqx/emqx"
+tag = "6.2.2"
+reference = "emqx/emqx@sha256:2888ea87b647b687b9cc2d92ceddbdd60af9fd2c41012fec8f0fd7bb3372ad81"
+source = "https://hub.docker.com/r/emqx/emqx"
+compressed_size_bytes = 149534773
+
+[[image]]
+service = "hermes"
+repository = "nousresearch/hermes-agent"
+tag = "v2026.7.7.2"
+reference = "nousresearch/hermes-agent@sha256:3db34ce19adfa080736a2a3feb0316dbcccc588faa9afe7fd8ae1c03b4f1a53a"
+source = "https://hub.docker.com/r/nousresearch/hermes-agent"
+compressed_size_bytes = 943955763
+
+[[image]]
+service = "jarvis-api"
+repository = "local project image"
+tag = "pending"
+reference = "pending"
+source = "repository build"
+compressed_size_bytes = 0

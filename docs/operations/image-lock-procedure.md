@@ -2,34 +2,26 @@
 
 Every runtime image must be pinned to an approved `linux/amd64` OCI digest before it appears in a runnable Compose configuration. Tags are discovery aids only; `latest`, major-only tags, and mutable references are prohibited.
 
-## Lock record
+## Current resolved record
 
-Record one entry for each image in the future `images.lock` file:
+The repository-root [`images.lock`](../../images.lock) contains the currently resolved Caddy, PostgreSQL, EMQX, and Hermes Linux/amd64 child digests, source URLs, and compressed sizes. It records metadata only: no image has been pulled and no service has been started. The future Jarvis API image remains pending its separately approved build.
 
-| Service | Official repository | Selected tag | Full OCI digest | Source URL | Platform | Size | Approval date |
-|---|---|---|---|---|---|---|---|
-| Caddy | `caddy` | pending | pending | pending | `linux/amd64` | pending | pending |
-| PostgreSQL | `postgres` | pending | pending | pending | `linux/amd64` | pending | pending |
-| EMQX | `emqx/emqx` | pending | pending | pending | `linux/amd64` | pending | pending |
-| Hermes | `nousresearch/hermes-agent` | pending | pending | pending | `linux/amd64` | pending | pending |
-| Jarvis API | local project image | pending | pending | repository build | `linux/amd64` | pending | pending |
-
-The final Compose values must use the full `repository@sha256:<64-hex-digest>` form. For multi-platform images, record both the inspected manifest-list context and the selected `linux/amd64` child digest.
+Compose consumes full `repository@sha256:<64-hex-digest>` values through `.env`; never replace a lock with a tag. For multi-platform images, lock the selected `linux/amd64` child digest, not merely the manifest-list digest.
 
 ## Owner approval checklist
 
-Before resolving or pulling each image, present:
+Before pulling each image, present:
 
 1. Official registry/repository and publisher.
 2. Selected version tag, full digest, platform, approximate download size, release notes, and security-relevant changes.
 3. Runtime privileges, persisted paths, published ports, healthcheck, and network membership.
 4. The exact pull command and expected local storage impact.
 
-The owner explicitly approves the image reference and download. Approval for one digest does not authorize a tag update, a new platform, or a replacement image.
+The owner explicitly approves each download. Approval for one digest does not authorize a tag update, a new platform, or a replacement image.
 
 ## Update procedure
 
-Image upgrades are a dedicated change: review the changelog and security impact, update the lock record and Compose value together, confirm backup status, receive owner approval, then pull and recreate only the affected service. Never silently repull or recreate services.
+Image upgrades are a dedicated change: review the changelog and security impact, update `images.lock` and the Compose value together, confirm backup status, receive owner approval, then pull and recreate only the affected service. Never silently repull or recreate services.
 
 ## Constraints
 
