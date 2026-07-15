@@ -1,0 +1,5 @@
+# Import this fragment inside Caddy's existing localhost-only site block.
+# The Compose integration must mount dashboard/ read-only at /srv/dashboard.
+root * /srv/dashboard
+try_files {path} {path}/ /index.html
+file_server
